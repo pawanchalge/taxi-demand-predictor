@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request
 import pickle
 import os
+import pandas as pd
 
 app = Flask(__name__)
 
@@ -22,7 +23,8 @@ def predict():
         hour = int(request.form["hour"])
         day = int(request.form["day"])
 
-        prediction = model.predict([[location, hour, day]])
+        input_df = pd.DataFrame([[location, hour, day]], columns=["PULocationID", "hour", "day"])
+        prediction = model.predict(input_df)
 
         return render_template(
             "index.html",
@@ -36,5 +38,5 @@ def predict():
         )
 
 if __name__ == "__main__":
-    port=int(os.environ.get("port",10000))
+    port=int(os.environ.get("PORT",5000))
     app.run(host="0.0.0.0",port=port)
